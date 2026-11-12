@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ALLSPARK Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+
+<body>
+    <div class="report-wrapper">
+
+        <div class="report-item">
+            <h1>Cost-effectiveness plane</h1>
+            <div id="chart" class="chart"></div>
+
+            <script type="text/javascript">
+                var graphs = {{ graphJSON | safe }};
+                Plotly.newPlot('chart', graphs.data, graphs.layout, { responsive: true });
+            </script>
+        </div>
+        <div class="report-wrapper-small">
+            <br>
+            Scenarios:
+            <ol>
+                <li>Unadjusted transition probabilities</li>
+                <li>0% discounting</li>
+                <li>Keto diet</li>
+                <li>Diabetes ceases to exist</li>
+                <li>Your intervention is run by monkeys</li>
+                <li>The Lord provides</li>
+                <li>Civil war</li>
+                <li>One Ring to rule them all, One Ring to find them, One Ring to bring them all, and in the darkness
+                    bind them</li>
+                <li>Steve</li>
+            </ol>
+        </div>
+
+        <h1>Explore your intervention further</h1>
+        <div class="report-wrapper-small">
+            You can see what the results look like when you:
+            <ul>
+                <li><a href="/stratsex">Stratify by sex</a></li>
+                <li><a href="/stratses">Stratify by socioeconomic status</a></li>
+            </ul>
+            If you want to test a different intervention, you can <a href="/">restart</a>
+            <br>
+            <br>
+            If you would like to discuss a full health economic analysis, please reach out to
+            <a href="mailto:jedidiah.morton@baker.edu.au">Jedidiah.Morton@baker.edu.au</a>
+        </div>
+    </div>
+
+
+
+
+</body>
+
+</html>

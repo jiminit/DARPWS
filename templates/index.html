@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>LTRISK</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Enter variables</h2>
+        <form action="/calculate" method="post" onsubmit="return finalcheck()">
+            <div class="input-group">
+                <label for="age">Age (required)</label>
+                <input type="number" step="1" id="age" name="age" placeholder="Age in years" required
+                    onblur="validateinputs()">
+                <span id="age-error" style="color: red; font-size: 0.8rem; display: none;">Age must be between 10 and
+                    90 years.</span>
+            </div>
+            <div class="input-group">
+                <label for="sex">Sex at birth (required)</label>
+                <input type="radio" id="sex_f" name="sex" value=0 checked> Female
+                <input type="radio" id="sex_m" name="sex" value=1> Male
+            </div>
+            <div class="input-group">
+                <label for="ldl">LDL-cholesterol</label>
+                <p class="subtitle">(leave blank if unsure)</p>
+                <input type="number" step="any" id="ldl" name="ldl" placeholder="LDL-C (mmol/L)"
+                    onblur="validateinputs()">
+                <span id="ldl-error" style="color: red; font-size: 0.8rem; display: none;">
+                    LDL-C must be between 0.1 and 10 mmol/L.</span>
+            </div>
+            <div class="input-group">
+                <label for="sbp">Systolic blood pressure</label>
+                <p class="subtitle">(leave blank if unsure)</p>
+                <input type="number" step="any" id="sbp" name="sbp" placeholder="Systolic blood pressure (mmHg)"
+                    onblur="validateinputs()">
+                <span id="sbp-error" style="color: red; font-size: 0.8rem; display: none;">
+                    Systolic blood pressure must be between 80 and 250 mmHg.</span>
+            </div>
+            <div class="input-group">
+                <label for="lpa">Lipoprotein (a)</label>
+                <p class="subtitle">(leave blank if unsure)</p>
+                <input type="number" step="any" id="lpa" name="lpa" placeholder="Lp(a) (nmol/L)"
+                    onblur="validateinputs()">
+                <span id="lpa-error" style="color: red; font-size: 0.8rem; display: none;">
+                    "Lp(a) must be between 0.1 and 2000 nmol/L."</span>
+            </div>
+            <div class="input-group">
+                <label for="dia">Do you have diabetes?</label>
+                <input type="radio" id="dia_0" name="dia" value=0 checked> No
+                <input type="radio" id="dia_1" name="dia" value=1> Yes
+                <input type="radio" id="dia_." name="dia" value=.> Unsure
+            </div>
+            <div class="input-group">
+                <label>Have you ever smoked?</label>
+                <input type="radio" name="smoke_status" value="no" checked onclick="toggleSmokingAge(false)"> No
+                <input type="radio" name="smoke_status" value="yes" onclick="toggleSmokingAge(true)"> Yes
+            </div>
+            <div id="smoking-inputs-section" class="input-group" style="display: none;">
+                <label for="sma">At what age did you start smoking?</label>
+                <p class="subtitle">(provide an approximate age if unsure)</p>
+                <input type="number" step="1" id="sma" name="sma" placeholder="Age started smoking in years"
+                    onblur="validateinputs()">
+                <span id="sma-error" style="color: red; font-size: 0.8rem; display: none;">Age started smoking must be
+                    between 5 and 90 years.</span>
+                <span id="sma-error2" style="color: red; font-size: 0.8rem; display: none;">
+                    Please input a smoking start age.</span>
+                <span id="age-sma-error" style="color: red; font-size: 0.8rem; display: none;">
+                    Age started smoking must be less than or equal to current age.</span>
+                <label for="cig">What is the average number of cigarrettes you smoke(d) per day?</label>
+                <p class="subtitle">(leave blank if unsure)</p>
+                <input type="number" step="any" id="cig" name="cig" placeholder="Average number of cigarettes"
+                    onblur="validateinputs()">
+                <span id="cig-error" style="color: red; font-size: 0.8rem; display: none;">
+                    Number of cigarettes smoked daily must be a number between 0.1 and 200.</span>
+                <label for="smo">If you have quit smoking, at what age did you quit?</label>
+                <p class="subtitle">(leave blank if you are a current smoker)</p>
+                <input type="number" step="1" id="smo" name="smo" placeholder="Age stopped smoking in years"
+                    onblur="validateinputs()">
+                <span id="smo-error" style="color: red; font-size: 0.8rem; display: none;">Age quit smoking must be
+                    between 5 and 90 years.</span>
+                <span id="sma-smo-error" style="color: red; font-size: 0.8rem; display: none;">Age quit smoking must be
+                    greater than age started smoking.</span>
+                <span id="age-smo-error" style="color: red; font-size: 0.8rem; display: none;">
+                    Age quit smoking must be less than or equal to current age.</span>
+            </div>
+            <br><br>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script>
+        function toggleSmokingAge(isYes) {
+            const smokingSection = document.getElementById('smoking-inputs-section');
+            if (isYes) {
+                smokingSection.style.display = 'block';
+            } else {
+                smokingSection.style.display = 'none';
+                document.getElementById('sma').value = '';
+                document.getElementById('cig').value = '';
+                document.getElementById('smo').value = '';
+            }
+        }
+
+
+
+        function validateinputs() {
+            const age = parseInt(document.getElementById('age').value);
+            const ldl = parseInt(document.getElementById('ldl').value);
+            const sbp = parseInt(document.getElementById('sbp').value);
+            const lpa = parseInt(document.getElementById('lpa').value);
+            const smoke = document.querySelector('input[name="smoke_status"][value="yes"]').checked;
+            const sma = parseInt(document.getElementById('sma').value);
+            const cig = parseInt(document.getElementById('cig').value);
+            const smo = parseInt(document.getElementById('smo').value);
+
+            const ageerror = document.getElementById('age-error');
+            const ldlerror = document.getElementById('ldl-error');
+            const sbperror = document.getElementById('sbp-error');
+            const lpaerror = document.getElementById('lpa-error');
+            const cigerror = document.getElementById('cig-error');
+            const smaerror = document.getElementById('sma-error');
+            const smaerror2 = document.getElementById('sma-error2');
+            const agesmaerror = document.getElementById('age-sma-error');
+            const agesmoerror = document.getElementById('age-smo-error');
+            const smoerror = document.getElementById('smo-error');
+            const smasmoerror = document.getElementById('sma-smo-error');
+            const submitBtn = document.querySelector('button[type="submit"]');
+
+            let isinvalid = false;
+
+            if (age < 10 || age > 90) {
+                ageerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                ageerror.style.display = 'none';
+            }
+
+            if (ldl < 0.1 || ldl > 10) {
+                ldlerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                ldlerror.style.display = 'none';
+            }
+
+            if (sbp < 80 || sbp > 250) {
+                sbperror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                sbperror.style.display = 'none';
+            }
+
+            if (lpa < 0.1 || lpa > 2000) {
+                lpaerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                lpaerror.style.display = 'none';
+            }
+
+            if (cig < 0.1 || cig > 200) {
+                cigerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                cigerror.style.display = 'none';
+            }
+
+            if (sma < 5 || sma > 90) {
+                smaerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                smaerror.style.display = 'none';
+            }
+
+            if (sma > age) {
+                agesmaerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                agesmaerror.style.display = 'none';
+            }
+
+            if (smo < 5 || smo > 90) {
+                smoerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                smoerror.style.display = 'none';
+            }
+
+            if (sma > smo) {
+                smasmoerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                smasmoerror.style.display = 'none';
+            }
+
+            if (smoke && isNaN(sma)) {
+                isinvalid = true;
+                smaerror2.style.display = 'block';
+            } else {
+                smaerror2.style.display = 'none';
+            }
+
+            if (smo > age) {
+                agesmoerror.style.display = 'block';
+                isinvalid = true;
+            } else {
+                agesmoerror.style.display = 'none';
+            }
+
+            if (isinvalid) {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+            }
+
+
+        }
+
+        function finalcheck() {
+            const age = parseInt(document.getElementById('age').value);
+            const sma = parseInt(document.getElementById('sma').value);
+            const smo = parseInt(document.getElementById('smo').value);
+            const smoke = document.querySelector('input[name="smoke_status"][value="yes"]').checked;
+
+            if (smoke && isNaN(sma)) {
+                alert("Please enter a smoking start age.");
+                return false;
+            }
+
+            return true;
+
+        }
+
+
+    </script>
+</body>
+
+</html>

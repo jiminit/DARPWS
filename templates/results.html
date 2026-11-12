@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ALLSPARK Model</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+    <h1>ALLSPARK Model</h1>
+    <h3>Advanced Life table Longitudinal Simulation for Predicting Adverse Risks and Key Outcomes.</h3>
+    <div class="report-wrapper">
+        <div class="container2">
+            <div class="report-item">
+                <h1>Results</h1>
+                <h2>Table: Results of the simulation comparing your selected intervention to the current trajectory.
+                </h2>
+                <div id="table-buttons">
+                    {% for key, table in tables.items() %}
+                    <button class="table-btn {% if loop.first %}active{% endif %}"
+                        onclick="switchTable('{{ key }}', this)">
+                        {{ table.title }}
+                    </button>
+                    {% endfor %}
+                </div>
+
+                {% for key, table in tables.items() %}
+                <div id="{{ key }}" class="table-wrapper {% if loop.first %}active{% endif %}">
+                    <table class="stata-table">
+                        <thead>
+                            <tr>
+                                {% for header in table.headers %}
+                                <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in table.data %}
+                            <tr>
+                                {% for cell in row %}
+                                {% set col_idx = loop.index0 %}
+                                <td
+                                    style="text-align: {{ table.align[col_idx] }}; {% if table.bold[col_idx] %}font-weight: bold;{% endif %}">
+                                    {{ cell }}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endfor %}
+
+                <!-- <table class="stata-table">
+                    <thead>
+                        <tr>
+                            <th>Outcome</th>
+                            <th>Standard of care</th>
+                            <th>Intervention</th>
+                            <th>Difference</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in result %}
+                        <tr>
+                            {% for cell in row %}
+                            <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table> -->
+                IRSD = Index of Relative Socioeconomic Disadvantage.
+                <br>
+                <br>
+                Interpretting the incremental cost-effectiveness ratio(ICER):
+                when the intervention leads to health benefits
+                (i.e., the difference in quality-adjusted life-years (QALYs)
+                is positive), then an ICER of less than $50,000 per QALY is generally considered cost-effective, and
+                a negative ICER means the intervention is cost-saving.
+            </div>
+
+            <div>
+                <h3><strong>
+                        Download tables:
+                    </strong></h3>
+                <form action="{{ url_for('download_tables') }}" method="POST" onsubmit="return validatecheckbox()">
+                    <!-- Select All Checkbox -->
+                    <!-- Individual Table Checkboxes -->
+                    {% for key, table in tables.items() %}
+                    <label style="margin-right: 15px;">
+                        <input type="checkbox" name="selected_tables" value="{{ table.title }}" class="table-select"
+                            id="{{ table }}" onclick="validatecheckbox()">
+                        {{ table.title }} <br>
+                    </label>
+                    {% endfor %}
+                    <label>
+                        <input type="checkbox" id="selectAll" onclick="toggleAll(this)" onclick="validatecheckbox()">
+                        <strong>All tables</strong>
+                    </label>
+                    <br><br>
+                    <button type="submit" class="button">Download Selected</button>
+                </form>
+            </div>
+
+            <!-- <div class="report-item">
+
+                    <h2>Figure: Cost-effectiveness plane comparing your selected intervention to the current trajectory.
+                    </h2>
+                    <div id="chart" class="chart"></div>
+
+                    <script type="text/javascript">
+                        var graphs = {{ graphJSON1 | safe }};
+
+                        // 2. Render the plot into the div with id "chart"
+                        Plotly.newPlot('chart', graphs.data, graphs.layout, { responsive: true });
+                    </script>
+                    IRSD = Index of Relative Socioeconomic Disadvantage.
+                    <br>
+                    QALY = Quality-adjusted life year
+                    <br>
+                    WTP = Willingness-to-pay threshold.
+                </div> -->
+            <br>
+            <hr>
+
+            <div class="report-item">
+
+                <h2>Figure: Cost-effectiveness plane comparing your selected intervention to the current trajectory.
+                </h2>
+                <div id="chart" class="chart"></div>
+
+                <div class="btn-group">
+                    <button class="toggle-btn active" onclick="switchGraph('graph1', this)">Overall</button>
+                    <button class="toggle-btn" onclick="switchGraph('graph2', this)">By sex</button>
+                    <button class="toggle-btn" onclick="switchGraph('graph3', this)">By IRSD</button>
+                    <button class="toggle-btn" onclick="switchGraph('graph4', this)">By sex and IRSD</button>
+                </div>
+
+                <div id="graph1-container" class="chart-container" style="display: block;"></div>
+                <div id="graph2-container" class="chart-container" style="display: none;"></div>
+                <div id="graph3-container" class="chart-container" style="display: none;"></div>
+                <div id="graph4-container" class="chart-container" style="display: none;"></div>
+                <br>
+                IRSD = Index of Relative Socioeconomic Disadvantage.
+                <br>
+                QALY = Quality-adjusted life year
+                <br>
+                WTP = Willingness-to-pay threshold.
+            </div>
+            <hr>
+            <div class="report-item">
+                <h2>Your inputs.</h2>
+                {% if inputs['model'] == 0 %}
+                <ul>
+                    <li>Age range: <strong>{{ inputs.DP_age_lb }}-{{ inputs.DP_age_ub }} years</strong></li>
+                    <li>Relative risk reduction for diabetes: <strong>{{ inputs.dp_rrr }}%</strong>
+                    </li>
+                    <li>Once-off overall cost: <strong>${{ inputs.dp_fc_t }}</strong></li>
+                    <li>Annual overall cost: <strong>${{ inputs.dp_ac_t }}</strong></li>
+                    <li>Length of the intervention: <strong>{{ inputs.dp_cycles }} years</strong></li>
+                    <li>Discounting rate: <strong>{{ inputs.dp_discounting }}%</strong></li>
+                </ul>
+                {% elif inputs['model'] == 1 %}
+                <ul>
+                    <li>Age range: <strong>{{ inputs.DC_age_lb }}-{{ inputs.DC_age_ub }} years</strong></li>
+                    <li>Relative risk reduction for myocardial infarction: <strong>{{ inputs.mi_rrr }}%</strong>
+                    </li>
+                    <li>Relative risk reduction for hospitalisation for heart failure: <strong>{{ inputs.hf_rrr
+                            }}%</strong>
+                    </li>
+                    <li>Relative risk reduction for stroke: <strong>{{ inputs.st_rrr }}%</strong></li>
+                    <li>Relative risk reduction for hospitalisation for peripheral disease: <strong>{{ inputs.pd_rrr
+                            }}%</strong></li>
+                    <li>Relative risk reduction for end-stage kidney disease: <strong>{{ inputs.eskd_rrr
+                            }}%</strong>
+                    </li>
+                    <li>Relative risk reduction for hospitalisation for hypoglycaemia: <strong>{{ inputs.hypo_rrr
+                            }}%</strong>
+                    </li>
+                    <li>Relative risk reduction for hospitalisation for hyperglycaemia: <strong>{{ inputs.hype_rrr
+                            }}%</strong>
+                    </li>
+                    <li>Relative risk reduction for cardiovascular death: <strong>{{ inputs.cvdeath_rrr }}%</strong>
+                    </li>
+                    <li>Relative risk reduction for kidney disease death: <strong>{{ inputs.redeath_rrr }}%</strong>
+                    </li>
+                    <li>Once-off cost for each person with diabetes: <strong>${{ inputs.fc_pp }}</strong></li>
+                    <li>Once-off overall cost: <strong>${{ inputs.fc_t }}</strong></li>
+                    <li>Annual cost for each person with diabetes: <strong>${{ inputs.ac_pp }}</strong></li>
+                    <li>Annual overall cost: <strong>${{ inputs.ac_t }}</strong></li>
+                    <li>Length of the intervention: <strong>{{ inputs.cycles }} years</strong></li>
+                    <li>Discounting rate: <strong>{{ inputs.discounting }}%</strong></li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="report-wrapper">
+        <div class="container2">
+            <h1>Explore your intervention further</h1>
+            <br>
+            <div class="report-item">
+                You can press back in your browser to modify your original inputs,
+                or press the button below to start over if you would like to test a different intervention.
+                <br>
+                <br>
+                <a href="{{ url_for('restart') }}" class="button">Restart</a>
+                <br>
+                <br>
+                If you would like to discuss a full health economic analysis for this intervention,
+                please reach out to
+                <a href="mailto:jedidiah.morton@baker.edu.au">Jedidiah.Morton@baker.edu.au</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bottom-style">
+        <div class="footer-content">
+            <img src="{{ url_for('static', filename='images/DA.png') }}" alt="Institution Logo" class="footer-logo">
+            <img src="{{ url_for('static', filename='images/Baker.svg') }}" alt="Institution Logo" class="footer-logo">
+            <img src="{{ url_for('static', filename='images/Monash.svg') }}" alt="Institution Logo" class="footer-logo">
+            <br>
+        </div>
+        <div class="footer-content">
+            <p>
+            <h3>Funded by Diabetes Australia.</h3>
+            </p>
+        </div>
+    </footer>
+
+
+    <script>
+        function switchTable(tableId, button) {
+            // Hide all table wrappers
+            document.querySelectorAll('.table-wrapper').forEach(wrapper => {
+                wrapper.classList.remove('active');
+            });
+
+            // Show selected table
+            document.getElementById(tableId).classList.add('active');
+
+            // Update active button state
+            document.querySelectorAll('.table-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+        }
+    </script>
+
+    <script>
+        // Parse JSON figures directly from Jinja2 context
+        const graph1Data = {{ graphJSON1 | safe }};
+        const graph2Data = {{ graphJSON2 | safe }};
+        const graph3Data = {{ graphJSON3 | safe }};
+        const graph4Data = {{ graphJSON4 | safe }};
+
+        // Render both plots on page load
+        Plotly.newPlot('graph1-container', graph1Data.data, graph1Data.layout);
+        Plotly.newPlot('graph2-container', graph2Data.data, graph2Data.layout);
+        Plotly.newPlot('graph3-container', graph3Data.data, graph3Data.layout);
+        Plotly.newPlot('graph4-container', graph4Data.data, graph4Data.layout);
+
+        // Toggle visibility function
+        function switchGraph(graphId, btn) {
+            // Hide all graph containers
+            document.querySelectorAll('.chart-container').forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show selected container
+            document.getElementById(graphId + '-container').style.display = 'block';
+
+            // Update button styles
+            document.querySelectorAll('.toggle-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            btn.classList.add('active');
+        }
+    </script>
+
+    <script>
+        function toggleAll(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('.table-select');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+        }
+    </script>
+
+
+    <script>
+
+        function validatecheckbox() {
+            // const lowerAge = parseInt(document.getElementById('DC_age_lb').value, 10);
+            // const upperAge = parseInt(document.getElementById('DC_age_ub').value, 10);
+            const checkboxes = document.querySelectorAll('.table-select');
+            submitBtn = document.querySelector('button[type="submit" ]');
+            const hasSelection = Array.from(checkboxes).some(cb => cb.checked);
+
+            let isinvalid = true;
+
+            if (hasSelection === true) {
+                isinvalid = false;
+            }
+
+            // if (upperAge < lowerAge) {
+            //     errorMsg.style.display = "block";
+            //     isinvalid = true;
+            // } else {
+            //     errorMsg.style.display = "none";
+            // }
+
+            if (isinvalid) {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+            }
+
+        }
+
+        function toggleAll(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('.table-select');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+            validatecheckbox();
+        }
+
+        document.addEventListener('DOMContentLoaded', validatecheckbox);
+
+    </script>
+
+</body>
+
+</html>

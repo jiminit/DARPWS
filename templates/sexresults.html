@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ALLSPARK Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+
+<body>
+    <div class="report-wrapper">
+
+        <div class="report-item">
+            <h1>Cost-effectiveness plane</h1>
+            <div id="chart" class="chart"></div>
+
+            <script type="text/javascript">
+                var graphs = {{ graphJSON | safe }};
+                Plotly.newPlot('chart', graphs.data, graphs.layout, { responsive: true });
+            </script>
+        </div>
+        <h1>ALLSPARK Results</h1>
+
+        <div class="report-item">
+            <table class="stata-table">
+                <h3>Women</h3>
+                <thead>
+                    <tr>
+                        <th>Outcome</th>
+                        <th>Standard of care</th>
+                        <th>Intervention</th>
+                        <th>Difference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result0 %}
+                    <tr>
+                        {% for cell in row %}
+                        <td>{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Men</h3>
+
+            <table class="stata-table">
+                <thead>
+                    <tr>
+                        <th>Outcome</th>
+                        <th>Standard of care</th>
+                        <th>Intervention</th>
+                        <th>Difference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result1 %}
+                    <tr>
+                        {% for cell in row %}
+                        <td>{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            Interpretting the ICER: when the intervention leads to health benefits (i.e., the difference in QALYs is
+            positive), then an ICER of less than ~$30,000 per QALY is considered cost-effective, and
+            a negative ICER means the intervention is cost-saving.
+            <br>
+            <br>
+            Abbreviations:
+            <ul>
+                <li>HF - heart failure</li>
+                <li>CVD - cardiovascular disease</li>
+                <li>CKD - chronic kidney disease</li>
+                <li>PN - peripheral neuropathy</li>
+                <li>QALYs - quality-adjusted life years</li>
+                <li>ICER - incremental cost-effectiveness ratio</li>
+            </ul>
+        </div>
+
+
+        <h1>Explore your intervention further</h1>
+        <div class="report-wrapper-small">
+            You can see what the results look like when you:
+            <ul>
+                <li><a href="/stratses">Stratify by socioeconomic status</a></li>
+                <li><a href="/sce">Change some of the model assumptions</a></li>
+            </ul>
+            If you want to test a different intervention, you can <a href="/">restart</a>
+            <br>
+            <br>
+            If you would like to discuss a full health economic analysis, please reach out to
+            <a href="mailto:jedidiah.morton@baker.edu.au">Jedidiah.Morton@baker.edu.au</a>
+        </div>
+    </div>
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,483 @@
+/* --- Base layout --- */
+body {
+  margin: 50px 0 0 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  background-color: #fff;
+  min-height: 90vh;
+}
+
+ul {
+  text-align: left;
+  /* Forces text to the left */
+  margin-left: auto;
+  /* Helps with spacing */
+  margin-right: auto;
+  width: fit-content;
+  /* Keeps the list container tight to the text */
+  padding-left: 20px;
+  /* Restores the indent for bullets */
+}
+
+/* --- Headings --- */
+h1 {
+  font-weight: 700;
+  font-size: 42px;
+  color: rgb(28, 74, 159);
+  margin: 0 0 8px 0;
+  /* small space below H1 */
+}
+
+h3 {
+  font-weight: 300;
+  font-size: 20px;
+  margin: 0 0 25px 0;
+  /* small gap after H3 before form */
+  max-width: 600px;
+}
+
+/* --- Form container --- */
+.form {
+  max-width: 650px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 32px;
+  /* even padding all around */
+  text-align: left;
+  background-color: #f6f6f6;
+  border-radius: 25px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Labels and Inputs --- */
+.label {
+  font-weight: 600;
+  color: rgb(28, 74, 159);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.details {
+  width: 95%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 100px;
+  border: 1px solid #f6f6f6;
+  margin-bottom: 20px;
+}
+
+/* --- Section Headings --- */
+h2 {
+  font-weight: 600;
+  font-size: 20px;
+  color: rgb(28, 74, 159);
+  margin: 25px 0 10px 0;
+}
+
+/* --- Nested Options --- */
+.nested-options,
+.percentage-container,
+.cost-input {
+  display: none;
+  margin-left: 25px;
+}
+
+.option,
+.cost-option,
+.stratify label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* --- Min/Max Text --- */
+.text-small {
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 300;
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  /* ensures even spacing after */
+}
+
+/* --- Button Container --- */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  /* space between buttons */
+  margin-top: 25px;
+}
+
+/* --- Primary Button --- */
+.button {
+  padding: 10px 30px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: rgb(28, 74, 159);
+  border: 1px solid rgb(28, 74, 159);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* --- Secondary Button --- */
+.buttonSecondary {
+  padding: 10px 30px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(28, 74, 159);
+  background-color: #fff;
+  border: 1px solid rgb(28, 74, 159);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* --- Hover Effects --- */
+.button:hover {
+  background-color: rgb(224, 235, 255);
+  color: black;
+  border: 1px solid black;
+}
+
+.buttonSecondary:hover {
+  background-color: rgb(224, 235, 255);
+  color: black;
+  border: 1px solid rgb(224, 235, 255);
+}
+
+.interventionTypes label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+.chart-container {
+  width: 80%;
+  max-width: 800px;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  color: #007bff;
+  /* A nice info-blue color */
+  font-weight: bold;
+}
+
+/* The actual text box (hidden by default) */
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  font-weight: normal;
+  border-radius: 5px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  left: 125%;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Show the text when hovering */
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.report-wrapper {
+  display: block;
+  align-items: left;
+  width: 100%;
+  max-width: 1000px;
+  margin-bottom: 20px auto;
+  gap: 40px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.report-item {
+  width: 100%;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.stata-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 30px;
+  table-layout: fixed;
+}
+
+.stata-table th,
+.stata-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+.stata-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.stata-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.stata-table th:first-child,
+.stata-table td:first-child {
+  text-align: left;
+  font-weight: bold;
+  background-color: #f9f9f9;
+  width: 25%;
+
+}
+
+
+.report-wrapper-small {
+  display: block;
+  align-items: left;
+  width: 40%;
+  max-width: 1000px;
+  margin: 40px auto;
+  gap: 40px;
+  padding-top: 20px;
+  padding-bottom: 50px;
+  text-align: left;
+}
+
+
+.button-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  /* Blue background */
+  color: white;
+  /* White text */
+  text-decoration: none;
+  /* Removes the underline */
+  border-radius: 5px;
+  /* Rounded corners */
+  font-weight: bold;
+}
+
+.button-link:hover {
+  background-color: #0056b3;
+}
+
+.button-link-red {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #a80000;
+  /* Blue background */
+  color: white;
+  /* White text */
+  text-decoration: none;
+  /* Removes the underline */
+  border-radius: 5px;
+  /* Rounded corners */
+  font-weight: bold;
+}
+
+.button-link-red:hover {
+  background-color: #7a000a;
+}
+
+.container2 {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1000px;
+  text-align: left;
+}
+
+.btn-group {
+  margin-bottom: 20px;
+}
+
+.toggle-btn {
+  padding: 8px 16px;
+  margin-right: 8px;
+  cursor: pointer;
+  border: 1px solid rgb(28, 74, 159);
+  background: #fff;
+  color: rgb(28, 74, 159);
+  border-radius: 4px;
+}
+
+.toggle-btn.active {
+  background-color: rgb(28, 74, 159);
+  color: white;
+}
+
+.toggle-btn:hover {
+  background-color: rgb(28, 74, 159);
+  color: white;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 800px;
+}
+
+.table-btn {
+  padding: 8px 16px;
+  margin-right: 8px;
+  border: 1px solid rgb(28, 74, 159);
+  background-color: white;
+  color: rgb(28, 74, 159);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+}
+
+.table-btn.active {
+  background-color: rgb(28, 74, 159);
+  color: white;
+}
+
+.table-btn:hover {
+  background-color: rgb(28, 74, 159);
+  color: white;
+}
+
+/* Hide unselected tables */
+.table-wrapper {
+  display: none;
+  margin-top: 20px;
+}
+
+.table-wrapper.active {
+  display: block;
+}
+
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255);
+  display: none;
+  /* Hidden initially */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid rgb(28, 74, 159);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+.bottom-style {
+  flex-shrink: 0;
+  border-top: 2px solid #ddd;
+  z-index: 10;
+  margin-top: 40px;
+  margin-bottom: 0px;
+  top: 100dvh;
+  position: sticky;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+  /* Centers all items together */
+  max-width: 1200px;
+  /* Allows wrapping on small screens */
+  margin: 0 auto;
+  width: 90%;
+  margin-top: 10px;
+}
+
+.footer-content {
+  margin-top: 20px;
+  text-align: center;
+  min-width: 200px;
+}
+
+.footer-logo {
+  height: auto;
+  max-height: 75px;
+  width: auto;
+  display: block;
+  /* margin-top: 10px; */
+}
+
+.footer-logo-large {
+  height: auto;
+  max-height: 100px;
+  width: auto;
+  display: block;
+}
+
+a,
+a:visited {
+  color: inherit;
+  /* Inherits text color from parent element */
+  text-decoration: none;
+  /* Removes default underline */
+}
+
+/* Maintain accessibility with subtle interactive states */
+a:hover,
+a:focus {
+  opacity: 0.8;
+  /* Or add a custom hover effect/color */
+}

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALLSPARK Model</title>
+
+  <!-- Fonts & CSS -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <!-- Title -->
+  <h1>ALLSPARK Model</h1>
+  <h3>Advanced Life table Longitudinal Simulation for Predicting Adverse Risks and Key Outcomes.</h3>
+
+  <div class="form">
+    <form action="/results" method="post" id="formulary" onsubmit="return validateinputs()">
+
+      <!-- Intervention Types -->
+      <div class="interventionTypes">
+        <h2>Intervention type</h2>
+
+        <!-- Diabetes Prevention -->
+        <label>
+          <input type="radio" name="model" value="0" id="diabetesCheck">
+          Diabetes prevention
+        </label>
+
+        <div class="nested-options" id="diabetesOptions">
+          <h2>Age range for the intervention</h2>
+          <i>Age range:</i>
+          <div>
+            <input type="number" name="DP_age_lb" id="DP_age_lb" min="0" max="100" placeholder="0"
+              onblur="validateinputs()">
+            <span>-</span>
+            <input type="number" name="DP_age_ub" id="DP_age_ub" min="0" max="100" placeholder="100"
+              onblur="validateinputs()">
+            <span>years</span>
+            <span id="dp-error-message" style="color: red; display: none;">Upper age limit must be greater than or equal
+              to lower age limit.</span>
+          </div>
+          </label>
+          <label>
+            <h2>Effectiveness of the intervention</h2>
+            <i>Relative risk reduction for diabetes prevention:</i>
+            <div>
+              <input type="number" name="dp_rrr" id="DP_RRR" min="0" max="100" placeholder="10">
+              <span>%</span>
+            </div>
+          </label>
+          <div class="section cost-section-dc">
+            <h2>Cost of the intervention</h2>
+            <label>
+              <i>Which type of costs should be included?</i> <br>
+            </label>
+            <div>
+              <label>
+                <input type="checkbox" name="program" value="fixed" id="dp_fixedcosts">
+                Fixed costs
+                <span class="tooltip">ⓘ
+                  <span class="tooltip-text">Fixed costs are costs that only occur once at the start of the
+                    intervention.</span>
+                </span>
+              </label>
+              <div class="nested-options" id="dp_fixedcostoptions">
+                <div id="dp_fixedtotalCostInput">
+                  <label>
+                    <span>$</span>
+                    <input type="number" name="dp_fc_t" id="DP_FC_T" min="0" placeholder="0.00">
+                  </label>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div>
+            <label>
+              <input type="checkbox" name="program" value="annual" id="dp_annualcosts">
+              Annual costs
+              <span class="tooltip">ⓘ
+                <span class="tooltip-text">Annual costs are costs that occur every year during the time frame.</span>
+              </span>
+            </label>
+            <div class="nested-options" id="dp_annualcostoptions">
+              <div id="dp_annualtotalCostInput">
+                <label>
+                  <span>$</span>
+                  <input type="number" name="dp_ac_t" id="DP_AC_T" min="0" placeholder="0.00">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <h2>Length of the intervention</h2>
+
+          <label>
+            <i>How long should the model run?</i>
+            <div>
+              <input type="number" name="dp_cycles" id="dp_cycles" min="1" max="20" placeholder="10">
+              <span>years</span>
+            </div>
+          </label>
+
+          <h2>Discounting rate</h2>
+
+          <label>
+            <i>What should the discounting rate be?</i>
+            <div>
+              <input type="number" name="dp_discounting" id="dp_discounting" min="0" max="10" placeholder="5">
+              <span>%</span>
+            </div>
+          </label>
+        </div>
+
+
+      </div>
+
+      <!-- Complication Prevention -->
+      <label>
+        <input type="radio" name="model" value="1" id="complicationCheck">
+        Diabetes complication prevention
+      </label>
+
+      <div class="nested-options" id="complicationOptions">
+        <h2>Age range for the intervention</h2>
+
+        <label>
+          <i>Age range:</i>
+          <div>
+            <input type="number" name="DC_age_lb" id="DC_age_lb" min="20" max="100" placeholder="20"
+              onblur="validateinputs()">
+            <span>-</span>
+            <input type="number" name="DC_age_ub" id="DC_age_ub" min="20" max="100" placeholder="100"
+              onblur="validateinputs()">
+            <span>years</span>
+          </div>
+          <span id="error-message" style="color: red; display: none;">Upper age limit must be greater than or equal to
+            lower age limit.</span>
+
+        </label>
+        <h2>Complications prevented by the intervention</h2>
+
+        <p><i>How does the intervention prevent complications? </i><span class="tooltip">ⓘ
+            <span class="tooltip-text">Be cautious about using both a change in blood glucose and a direct reduction in
+              complications, as this may double count the benefits.</span>
+          </span></p>
+
+        <div>
+          <label>
+            <input type="checkbox" id="a1ccheck" name="a1ccheck" value="a1ccheck">
+            Change in blood glucose
+          </label>
+          <div class="percentage-container" id="a1csection">
+            <label>
+              <i>Absolute change in HbA1c:</i><br>
+              <input type="number" name="a1c_r" id="a1c_r" min="-3" max="3" placeholder="0.00" onblur="validatea1c ()">
+              <span>percentage points </span><span class="tooltip">ⓘ
+                <span class="tooltip-text">Use a negative number for a reduction in HbA1c</span>
+              </span><br>
+              <span id="a1c-error-message" style="color: red; display: none;">(This will model an increase in
+                HbA1c.)</span>
+            </label>
+            <br>
+          </div>
+
+        </div>
+
+        <label>
+          <input type="checkbox" id="compcheck" name="compcheck" value="compcheck">
+          Direct reduction in complications
+        </label>
+        <div class="percentage-container" id="compsection">
+
+          <p><i>Which complications does the intervention prevent?</i></p>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="MI" id="MIcheck">
+              Myocardial infarction (MI)
+            </label>
+            <div class="percentage-container" id="MIperc">
+              <label>
+                <i>Relative risk reduction for MI:</i>
+                <div>
+                  <input type="number" name="mi_rrr" id="mi_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="HF" id="HFcheck">
+              Hospitalisation for heart failure (HHF)
+            </label>
+            <div class="percentage-container" id="HFperc">
+              <label>
+                <i>Relative risk reduction for HHF:</i>
+                <div>
+                  <input type="number" name="hf_rrr" id="hf_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="ST" id="STcheck">
+              Stroke
+            </label>
+            <div class="percentage-container" id="STperc">
+              <label>
+                <i>Relative risk reduction for stroke:</i>
+                <div>
+                  <input type="number" name="st_rrr" id="st_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="PD" id="PDcheck">
+              Hospitalisation for peripheral disease (HPD)
+              <span class="tooltip">ⓘ
+                <span class="tooltip-text">Includes hospitalisation for foot ulcer, cellulitis, peripheral artery
+                  disease, osteomyelitis, and lower-extremity amputation.</span>
+              </span>
+            </label>
+
+            <div class="percentage-container" id="PDperc">
+              <label>
+                <i>Relative risk reduction for HPD:</i>
+                <div>
+                  <input type="number" name="pd_rrr" id="pd_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="ESKD" id="ESKDcheck">
+              End-stage kidney disease (ESKD)
+            </label>
+            <div class="percentage-container" id="ESKDperc">
+              <label>
+                <i>Relative risk reduction for ESKD:</i>
+                <div>
+                  <input type="number" name="eskd_rrr" id="eskd_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="hypo" id="hypocheck">
+              Hospitalisation for hypoglycaemia (HHo)
+            </label>
+            <div class="percentage-container" id="hypoperc">
+              <label>
+                <i>Relative risk reduction for HHo:</i>
+                <div>
+                  <input type="number" name="hypo_rrr" id="hypo_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="hype" id="hypecheck">
+              Hospitalisation for hyperglycaemia (HHer)
+            </label>
+            <div class="percentage-container" id="hypeperc">
+              <label>
+                <i>Relative risk reduction for HHer:</i>
+                <div>
+                  <input type="number" name="hype_rrr" id="hype_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="cvdeath" id="cvdeathcheck">
+              Cardiovascular death
+            </label>
+            <div class="percentage-container" id="cvdeathperc">
+              <label>
+                <i>Relative risk reduction for cardiovascular death:</i>
+                <div>
+                  <input type="number" name="cvdeath_rrr" id="cvdeath_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="option">
+            <label>
+              <input type="checkbox" name="focus" value="redeath" id="redeathcheck">
+              Kidney disease death
+            </label>
+            <div class="percentage-container" id="redeathperc">
+              <label>
+                <i>Relative risk reduction for kidney disease death:</i>
+                <div>
+                  <input type="number" name="redeath_rrr" id="redeath_rrr" min="0" max="100" placeholder="0">
+                  <span>%</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost Section -->
+        <div class="section cost-section-dc">
+          <h2>Cost of the intervention</h2>
+          <label>
+            <i>Which type of costs should be included?</i> <br>
+          </label>
+          <div>
+            <label>
+              <input type="checkbox" name="program" value="fixed" id="fixedcosts">
+              Fixed costs
+              <span class="tooltip">ⓘ
+                <span class="tooltip-text">Fixed costs are costs that only occur once at the start of the
+                  intervention.</span>
+              </span>
+            </label>
+            <div class="nested-options" id="fixedcostoptions">
+              <div class="cost-option"></div>
+              <label>
+                <input type="checkbox" name="fixedperPerson" value="fixedperPerson" id="fixedperPerson">
+                Once-off cost for each person with diabetes
+              </label>
+              <div class="cost-input" id="fixedcostPerPersonInput">
+                <label>
+                  <span>$</span>
+                  <input type="number" name="fc_pp" id="FC_PP" min="0" placeholder="0.00">
+                </label>
+              </div>
+
+              <div class="cost-option"></div>
+              <label>
+                <input type="checkbox" name="fixedtotalCost" value="fixedtotalCost" id="fixedtotalCost">
+                Once-off overall cost
+              </label>
+              <div class="cost-input" id="fixedtotalCostInput">
+                <label>
+                  <span>$</span>
+                  <input type="number" name="fc_t" id="FC_T" min="0" placeholder="0.00">
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div>
+          <label>
+            <input type="checkbox" name="program" value="annual" id="annualcosts">
+            Annual costs
+            <span class="tooltip">ⓘ
+              <span class="tooltip-text">Annual costs are costs that occur every year during the time frame.</span>
+            </span>
+          </label>
+          <div class="nested-options" id="annualcostoptions">
+
+            <div class="cost-option"></div>
+            <label>
+              <input type="checkbox" name="annualperPerson" value="annualperPerson" id="annualperPerson">
+              Annual cost for each person with diabetes
+            </label>
+            <div class="cost-input" id="annualcostPerPersonInput">
+              <label>
+                <span>$</span>
+                <input type="number" name="ac_pp" id="AC_PP" min="0" placeholder="0.00">
+              </label>
+            </div>
+
+            <div class="cost-option"></div>
+            <label>
+              <input type="checkbox" name="annualtotalCost" value="annualtotalCost" id="annualtotalCost">
+              Annual overall cost
+            </label>
+            <div class="cost-input" id="annualtotalCostInput">
+              <label>
+                <span>$</span>
+                <input type="number" name="ac_t" id="AC_T" min="0" placeholder="0.00">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <h2>Length of the intervention</h2>
+
+        <label>
+          <i>How long should the model run?</i>
+          <div>
+            <input type="number" name="cycles" id="cycles" min="1" max="20" placeholder="10">
+            <span>years</span>
+          </div>
+        </label>
+
+        <h2>Discounting rate</h2>
+
+        <label>
+          <i>What should the discounting rate be?</i>
+          <div>
+            <input type="number" name="discounting" id="discounting" min="0" max="10" placeholder="5">
+            <span>%</span>
+          </div>
+        </label>
+      </div>
+
+  </div>
+
+
+
+  <!-- Buttons -->
+  <div class="button-container">
+    <button type="submit" class="button">Estimate cost-effectiveness</button>
+    <button type="reset" class="buttonSecondary">Reset inputs</button>
+  </div>
+  </form>
+  </div>
+
+
+  <footer class="bottom-style">
+    <div class="footer-content">
+      <img src="{{ url_for('static', filename='images/DA.png') }}" alt="Institution Logo" class="footer-logo">
+      <img src="{{ url_for('static', filename='images/Baker.svg') }}" alt="Institution Logo" class="footer-logo">
+      <img src="{{ url_for('static', filename='images/Monash.svg') }}" alt="Institution Logo" class="footer-logo">
+      <br>
+    </div>
+    <div class="footer-content">
+      <p>
+      <h3>Funded by Diabetes Australia.</h3>
+      </p>
+    </div>
+  </footer>
+
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="spinner"></div>
+    <h2>Performing simulation...</h2>
+    <p>This should take approximately 15 seconds.</p>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+  <script>
+
+    function validateinputs() {
+      const dplowerAge = parseInt(document.getElementById('DP_age_lb').value, 10);
+      const dpupperAge = parseInt(document.getElementById('DP_age_ub').value, 10);
+      const lowerAge = parseInt(document.getElementById('DC_age_lb').value, 10);
+      const upperAge = parseInt(document.getElementById('DC_age_ub').value, 10);
+      const dperrorMsg = document.getElementById('dp-error-message');
+      const errorMsg = document.getElementById('error-message');
+      submitBtn = document.querySelector('button[type="submit" ]');
+      let isinvalid = false;
+
+      if (dpupperAge < dplowerAge) {
+        dperrorMsg.style.display = "block";
+        isinvalid = true;
+      } else {
+        dperrorMsg.style.display = "none";
+      }
+
+      if (upperAge < lowerAge) {
+        errorMsg.style.display = "block";
+        isinvalid = true;
+      } else {
+        errorMsg.style.display = "none";
+      }
+
+      if (isinvalid) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+      }
+
+    }
+
+    function validatea1c() {
+      const a1c = parseInt(document.getElementById('a1c_r').value, 0);
+      const errorMsg = document.getElementById('a1c-error-message');
+      if (a1c > 0) {
+        errorMsg.style.display = "block";
+      } else {
+        errorMsg.style.display = "none";
+      }
+    }
+
+    // document.addEventListener('submit', function (e) {
+    //   const lowerAge = parseInt(document.getElementById('DC_age_lb').value, 10);
+    //   const upperAge = parseInt(document.getElementById('DC_age_ub').value, 10);
+    //   const errorMsg = document.getElementById('error-message');
+
+    //   if (upperAge < lowerAge) {
+    //     e.preventDefault();
+    //     errorMsg.textContent = "Upper age limit must be greater than or equal to lower age limit.";
+    //     errorMsg.style.display = "block";
+    //   } else {
+    //     errorMsg.style.display = "none";
+    //   }
+    // });
+  </script>
+
+  <script>
+    const form = document.getElementById('formulary');
+    const loadingOverlay = document.getElementById('loading-overlay');
+
+    form.addEventListener('submit', () => {
+      loadingOverlay.style.display = 'flex';
+    });
+  </script>
+
+
+</body>
+
+
+
+</html>
