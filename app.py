@@ -6,7 +6,6 @@
 import pandas as pd
 import numpy as np
 import os
-import time
 import plotly.express as px
 import plotly.io as pio
 import csv
