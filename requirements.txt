@@ -1,0 +1,13 @@
+flask
+gunicorn
+plotly
+pandas
+numpy
+time
+warnings
+json
+os
+csv
+io
+zipfile
+
