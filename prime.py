@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import warnings
 from pandas.errors import PerformanceWarning
 import plotly.express as px
 import plotly.io as pio
@@ -13,6 +14,7 @@ from orion import pax
 
 
 def results_tables(df):
+    warnings.simplefilter("ignore", category=PerformanceWarning)
     
     df_sub = df.groupby(['sex', 'sq', 'compint'], as_index=False).sum()
     
@@ -86,6 +88,7 @@ def results_tables(df):
     return df_sub, df_sub_sex, df_sub_sq, df_sub_ov
 
 def restab(df):
+    warnings.simplefilter("ignore", category=PerformanceWarning)
 
     df_sub = df.pivot(index=['sex','sq'], columns='compint', values=['case', 'death', 'yll', 'qaly', 'hccost', 'intcost', 'tcost']).reset_index()
 
