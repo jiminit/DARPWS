@@ -3,7 +3,6 @@ gunicorn
 plotly
 pandas
 numpy
-warnings
 json
 os
 csv
