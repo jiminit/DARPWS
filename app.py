@@ -26,6 +26,10 @@ app.secret_key = "412351453dbcugahytve3825"
 def index():
     return render_template('landing.html')
 
+@app.route('/methods')
+def methods():
+    return render_template('methods.html')
+
 @app.route('/results', methods=['POST'])
 def calculate():
     session['user_data'] = request.form

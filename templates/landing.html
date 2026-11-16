@@ -110,7 +110,7 @@
           <label>
             <i>What should the discounting rate be?</i>
             <div>
-              <input type="number" name="dp_discounting" id="dp_discounting" min="0" max="10" placeholder="5">
+              <input type="number" name="dp_discounting" id="dp_discounting" step=0.1 min="0" max="10" placeholder="5">
               <span>%</span>
             </div>
           </label>
@@ -423,7 +423,7 @@
         <label>
           <i>What should the discounting rate be?</i>
           <div>
-            <input type="number" name="discounting" id="discounting" min="0" max="10" placeholder="5">
+            <input type="number" name="discounting" id="discounting" step=0.1 min="0" max="10" placeholder="5">
             <span>%</span>
           </div>
         </label>
@@ -442,6 +442,54 @@
   </div>
 
 
+  <button class="guide-tab" id="guideTab" aria-controls="guideDrawer" aria-expanded="false">User guide</button>
+  <aside class="guide-drawer" id="guideDrawer" role="dialog" aria-labelledby="guideTitle" aria-modal="false">
+    <div class="guide-head">
+      <h2 id="guideTitle" tabindex="-1">User guide</h2>
+      <button class="guide-close" id="guideClose" aria-label="Close guide">&times;</button>
+    </div>
+    <div class="guide-body">
+      <div class="guide-progress" id="guideProgress"></div>
+      <div class="guide-bar" aria-hidden="true"><span id="guideBar"></span></div>
+      <div id="guideStep" aria-live="polite"></div>
+      <div class="guide-actions">
+        <button class="guide-btn" id="guideShow">Show me</button>
+        <button class="guide-btn" id="guideExample">Load example data</button>
+      </div>
+      <ol class="guide-steps" id="guideList"></ol>
+    </div>
+    <div class="guide-nav">
+      <button class="guide-btn" id="guidePrev">Back</button>
+      <button class="guide-btn primary" id="guideNext">Next</button>
+    </div>
+    <div class="guide-more">
+      <details>
+        <summary>What is discounting?</summary>
+        <p>Discounting is a practice in health economics where outcomes in the future are devalued. The discounting rate
+          sets the rate at which these outcomes are devalued over time.</p>
+      </details>
+      <details>
+        <summary>Are there detailed methods available?</summary>
+        <p>Yes. Click <a href="/methods" target="_blank" rel="noopener noreferrer">here</a> for detailed methods.</p>
+      </details>
+      <details>
+        <summary>Can I have the code?</summary>
+        <p>Yes. Click <a href="https://github.com/jimb0w/Diabetes_Equity" target="_blank"
+            rel="noopener noreferrer">here</a> for the Stata code for the diabetes prevention model,
+          and <a href="https://github.com/cardiopharmnerd/ALLSPARK" target="_blank" rel="noopener noreferrer">here</a>
+          for the Stata code for the diabetes complication prevention model.
+          Click <a href="https://github.com/jimb0w/ALLSPARK" target="_blank" rel="noopener noreferrer">here</a> for the
+          Python version of both (including the code for this website).
+        </p>
+      </details>
+    </div>
+    <div class="guide-foot">
+      <button id="guideRestart">Restart guide</button>
+      <p><a href="https://github.com/cardiopharmnerd/ALLSPARK">ALLSPARK</a></p>
+    </div>
+  </aside>
+  <div class="guide-spot" id="guideSpot" aria-hidden="true"></div>
+
   <footer class="bottom-style">
     <div class="footer-content">
       <img src="{{ url_for('static', filename='images/DA.png') }}" alt="Institution Logo" class="footer-logo">
@@ -451,7 +499,7 @@
     </div>
     <div class="footer-content">
       <p>
-      <h3>Funded by Diabetes Australia.</h3>
+        Created by Adam Livori and Jedidiah Morton. <br> Funded by Diabetes Australia.
       </p>
     </div>
   </footer>

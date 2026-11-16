@@ -481,3 +481,416 @@ a:focus {
   opacity: 0.8;
   /* Or add a custom hover effect/color */
 }
+
+
+
+/* =====================================================
+   USER GUIDE DRAWER
+   ===================================================== */
+:root {
+  --guide-w: 400px;
+  --guide-ink: #000;
+  --guide-paper: #fff;
+  --guide-accent: rgb(28, 74, 159);
+  --guide-tint: rgb(224, 235, 255);
+  --guide-panel: #f6f6f6;
+  --guide-line: #ddd;
+  --guide-muted: #555;
+}
+
+/* Lets the page slide over smoothly when the drawer opens */
+body {
+  transition: padding-right 0.25s ease;
+}
+
+@media (min-width: 901px) {
+  body.guide-open {
+    padding-right: var(--guide-w);
+  }
+}
+
+/* --- Tab (opens the guide) --- */
+.guide-tab {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 900;
+  padding: 16px 10px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: var(--guide-accent);
+  border: 1px solid var(--guide-accent);
+  border-right: 0;
+  border-radius: 25px 0 0 25px;
+  cursor: pointer;
+  writing-mode: vertical-rl;
+  transition: all 0.3s ease;
+}
+
+.guide-tab:hover {
+  background-color: var(--guide-tint);
+  color: #000;
+  border-color: #000;
+}
+
+body.guide-open .guide-tab {
+  display: none;
+}
+
+.guide-tab:focus-visible,
+.guide-drawer button:focus-visible,
+.guide-drawer summary:focus-visible,
+.guide-drawer a:focus-visible {
+  outline: 3px solid var(--guide-accent);
+  outline-offset: 2px;
+}
+
+/* --- Drawer --- */
+.guide-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--guide-w);
+  max-width: 100vw;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  background: var(--guide-paper);
+  color: var(--guide-ink);
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+  /* body is text-align:center, so reset it here */
+  border-left: 1px solid var(--guide-line);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0s 0.25s;
+}
+
+.guide-drawer.is-open {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.25s ease;
+}
+
+.guide-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--guide-line);
+}
+
+.guide-head h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--guide-accent);
+}
+
+.guide-head h2:focus {
+  outline: none;
+}
+
+.guide-close {
+  background: none;
+  border: 0;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--guide-muted);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.guide-close:hover {
+  color: var(--guide-accent);
+}
+
+.guide-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.guide-body h3 {
+  margin: 0 0 8px;
+  max-width: none;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--guide-accent);
+}
+
+.guide-body p {
+  margin: 0 0 12px;
+  max-width: 62ch;
+}
+
+/* --- Progress --- */
+.guide-progress {
+  font-size: 12px;
+  color: var(--guide-muted);
+  margin-bottom: 6px;
+}
+
+.guide-bar {
+  height: 6px;
+  background: var(--guide-line);
+  border-radius: 100px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.guide-bar span {
+  display: block;
+  height: 100%;
+  background: var(--guide-accent);
+  border-radius: 100px;
+  transition: width 0.25s ease;
+}
+
+/* --- Buttons (mirror .button / .buttonSecondary) --- */
+.guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.guide-btn {
+  padding: 8px 22px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--guide-accent);
+  background-color: #fff;
+  border: 1px solid var(--guide-accent);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guide-btn:hover {
+  background-color: var(--guide-tint);
+  color: #000;
+  border-color: var(--guide-tint);
+}
+
+.guide-btn.primary {
+  color: #fff;
+  background-color: var(--guide-accent);
+}
+
+.guide-btn.primary:hover {
+  background-color: var(--guide-tint);
+  color: #000;
+  border-color: #000;
+}
+
+.guide-btn:disabled,
+.guide-btn:disabled:hover {
+  opacity: 0.4;
+  cursor: default;
+  color: var(--guide-accent);
+  background-color: #fff;
+  border-color: var(--guide-accent);
+}
+
+/* --- Step list --- */
+.guide-steps {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--guide-line);
+}
+
+.guide-steps button {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--guide-line);
+  padding: 10px 8px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--guide-ink);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.guide-steps button:hover {
+  background-color: var(--guide-tint);
+}
+
+.guide-steps button[aria-current="step"] {
+  font-weight: 600;
+  color: var(--guide-accent);
+}
+
+.guide-steps .done::after {
+  content: " ✓";
+  color: var(--guide-accent);
+}
+
+/* --- Concepts (same grey panel as .form) --- */
+.guide-more {
+  margin-top: 24px;
+  padding: 8px 20px;
+  background-color: var(--guide-panel);
+  border-radius: 20px;
+}
+
+.guide-more details {
+  border-bottom: 1px solid var(--guide-line);
+  padding: 10px 0;
+}
+
+.guide-more details:last-child {
+  border-bottom: 0;
+}
+
+.guide-more summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--guide-accent);
+}
+
+.guide-more details p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--guide-muted);
+}
+
+/* --- Footer --- */
+.guide-foot {
+  padding: 12px 24px;
+  border-top: 1px solid var(--guide-line);
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.guide-foot a,
+.guide-foot button {
+  color: var(--guide-accent);
+  background: none;
+  border: 0;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* --- Spotlight + toast --- */
+.guide-spot {
+  position: fixed;
+  z-index: 950;
+  pointer-events: none;
+  border-radius: 16px;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--guide-accent), 0 0 0 9999px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity 0.2s ease, top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+.guide-spot.on {
+  opacity: 1;
+}
+
+.guide-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 1100;
+  padding: 10px 20px;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  color: #fff;
+  background: #333;
+  border-radius: 100px;
+}
+
+/* --- Mobile: bottom sheet --- */
+@media (max-width: 900px) {
+  .guide-drawer {
+    top: auto;
+    left: 0;
+    width: 100%;
+    height: 62vh;
+    border-left: 0;
+    border-top: 1px solid var(--guide-line);
+    border-radius: 25px 25px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(100%);
+  }
+
+  .guide-tab {
+    top: auto;
+    bottom: 16px;
+    right: 16px;
+    transform: none;
+    writing-mode: horizontal-tb;
+    border-right: 1px solid var(--guide-accent);
+    border-radius: 100px;
+    padding: 10px 24px;
+  }
+}
+
+/* Scoped so it doesn't switch off the site's own hover transitions */
+@media (prefers-reduced-motion: reduce) {
+
+  body,
+  .guide-tab,
+  .guide-drawer,
+  .guide-bar span,
+  .guide-btn,
+  .guide-steps button,
+  .guide-spot {
+    transition: none !important;
+  }
+}
+
+.guide-body a,
+.guide-body a:visited {
+  color: var(--guide-accent);
+  text-decoration: underline;
+}
+
+.guide-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--guide-line);
+  background: var(--guide-paper);
+}
+
+/* Equal widths so "Next" -> "Finish" doesn't shift anything */
+.guide-nav .guide-btn {
+  min-width: 110px;
+}
+
+.dropdown {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.dropdown summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dropdown[open] summary {
+  margin-bottom: 0.5rem;
+}

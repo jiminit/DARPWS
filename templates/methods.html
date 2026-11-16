@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ALLSPARK Model</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+    <h1>ALLSPARK Model</h1>
+    <h3>Advanced Life table Longitudinal Simulation for Predicting Adverse Risks and Key Outcomes.</h3>
+    <div class="report-wrapper">
+        <div class="container2">
+            <div class="report-item">
+                <h1>Methods</h1>
+                <h2>Subheading 1 </h2>
+                <p>Once the paper is written, we'll put some methods here.</p>
+            </div>
+
+            <div class="report-wrapper">
+                <div class="container2">
+                    <h1>Get in touch</h1>
+                    <br>
+                    <div class="report-item">
+                        If you would like to discuss the model further, such as
+                        modifying the methods for a specific analysis that can't be
+                        performed on this site, please please reach out to
+                        <a href="mailto:jedidiah.morton@baker.edu.au">Jedidiah.Morton@baker.edu.au</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bottom-style">
+        <div class="footer-content">
+            <img src="{{ url_for('static', filename='images/DA.png') }}" alt="Institution Logo" class="footer-logo">
+            <img src="{{ url_for('static', filename='images/Baker.svg') }}" alt="Institution Logo" class="footer-logo">
+            <img src="{{ url_for('static', filename='images/Monash.svg') }}" alt="Institution Logo" class="footer-logo">
+            <br>
+        </div>
+        <div class="footer-content">
+            <p>
+                Created by Adam Livori and Jedidiah Morton. <br> Funded by Diabetes Australia.
+            </p>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>
